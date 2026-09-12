@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="sk">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Wi‑Fi Analyzer</title>
+<style>
+:root{--bg:#07111f;--panel:#0d2035;--panel2:#102844;--line:#25435e;--txt:#eef6ff;--muted:#91a9bf;--blue:#42a9ff;--green:#39d98a;--amber:#ffc857;--red:#ff6685}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(180deg,#081524,#06101c);color:var(--txt);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;min-height:100vh}.wrap{max-width:1180px;margin:auto;padding:18px 14px 45px}.top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.title{font-size:28px;font-weight:800}.sub{color:var(--muted);font-size:13px;margin-top:4px}.pill{border:1px solid var(--line);border-radius:14px;padding:10px 12px;color:#d8e9f8;font-size:12px;white-space:nowrap}.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--green);margin-right:7px;box-shadow:0 0 12px var(--green)}
+.verdict{margin-top:16px;padding:18px;border:1px solid #2e638d;border-radius:20px;background:linear-gradient(135deg,#102f4c,#0c2037);box-shadow:0 12px 32px #0005}.verdictLabel{color:#8ecfff;font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:.07em}.verdictMain{font-size:27px;font-weight:900;margin:5px 0}.verdictSub{color:#bed1e2;font-size:14px;line-height:1.5}.bestGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}.bestCard{background:#0a1b2e;border:1px solid var(--line);border-radius:14px;padding:12px}.bestCard b{font-size:17px}.bestCard small{display:block;color:var(--muted);margin-top:4px}.score{font-weight:800;color:var(--green)}
+.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:9px;margin-top:12px}.stat{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px}.stat span{display:block;color:var(--muted);font-size:11px}.stat strong{font-size:21px;display:block;margin-top:3px}.controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:14px 0}.tabs{display:flex;gap:7px}.btn,.tab{border:1px solid var(--line);background:#0b1c30;color:var(--txt);padding:10px 14px;border-radius:12px;font-weight:700}.tab.active{background:var(--blue);color:#04111d;border-color:var(--blue)}.tab.disabled{opacity:.35}.btn{margin-left:auto}.btn:active,.tab:active{transform:scale(.98)}
+.mine{display:flex;gap:8px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:9px 12px;flex:1;min-width:260px}.mine label{font-size:12px;color:var(--muted);white-space:nowrap}.mine input{background:transparent;border:0;outline:0;color:white;width:100%;font-size:14px}.grid{display:grid;grid-template-columns:320px 1fr;gap:12px}.panel{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:15px}.panel h2{font-size:17px;margin:0 0 12px}.rank{padding:12px;border-radius:13px;border:1px solid transparent;margin-bottom:8px;background:#0a1b2d}.rank.first{border-color:#2f86c7;background:#0d2d49}.rankTop{display:flex;justify-content:space-between;gap:8px;align-items:center}.rank .ch{font-weight:800}.quality{font-weight:800}.bar{height:5px;background:#17354e;border-radius:9px;margin-top:8px;overflow:hidden}.fill{height:100%;background:linear-gradient(90deg,var(--red),var(--amber),var(--green))}.desc{font-size:11px;color:var(--muted);margin-top:6px}.chartWrap{position:relative;height:370px}canvas{width:100%;height:100%;display:block}.legend{font-size:11px;color:var(--muted);margin-top:6px}.tablePanel{margin-top:12px;overflow:hidden}.tableScroll{overflow-x:auto}table{width:100%;border-collapse:collapse;min-width:780px}th{text-align:left;color:var(--muted);font-size:11px;padding:9px;border-bottom:1px solid var(--line)}td{padding:10px 9px;border-bottom:1px solid #1a3952;font-size:13px}.ssid{font-weight:800}.mineTag{color:#7bd1ff;font-size:10px;margin-left:5px}.rssiBar{width:72px;height:5px;background:#19354c;border-radius:6px;display:inline-block;margin-right:7px;vertical-align:middle}.rssiFill{height:100%;background:var(--green);border-radius:6px}.error{display:none;background:#3a1721;border:1px solid #9c3c53;color:#ffdbe3;padding:13px;border-radius:14px;margin-top:12px}.error button{margin-top:8px;background:#ffdbe3;color:#32111a;border:0;border-radius:9px;padding:8px 10px;font-weight:700}.note{color:var(--muted);font-size:11px;line-height:1.45;margin-top:10px}
+@media(max-width:800px){.wrap{padding:12px 9px 35px}.title{font-size:22px}.top{align-items:center}.sub{font-size:11px}.pill{padding:8px;font-size:10px}.verdictMain{font-size:22px}.bestGrid{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}.stats .stat:last-child{grid-column:span 2}.grid{grid-template-columns:1fr}.chartWrap{height:310px}.btn{margin-left:0}.mine{order:3;width:100%}.controls{align-items:stretch}.tabs{width:100%}.tab{flex:1}.panel{padding:12px}}
+</style>
+</head>
+<body><div class="wrap">
+<div class="top"><div><div class="title">Wi‑Fi Analyzer</div><div class="sub">Android · reálny Wi‑Fi sken · analýza rušenia</div></div><div class="pill"><span class="dot"></span><span id="status">Pripravené</span></div></div>
+<div id="error" class="error"><b id="errorTitle">Sken nie je dostupný</b><div id="errorText"></div><button id="settingsBtn" style="display:none" onclick="AndroidWiFi.openLocationSettings()">Otvoriť nastavenia polohy</button></div>
+
+<div class="verdict">
+  <div class="verdictLabel">Odporúčanie pre toto miesto</div>
+  <div id="verdictMain" class="verdictMain">Čakám na prvý sken…</div>
+  <div id="verdictSub" class="verdictSub">Telefón preskenuje okolité siete a vyberie najvhodnejšie pásmo, kanál a šírku.</div>
+  <div class="bestGrid">
+    <div class="bestCard"><small>Výkon / stabilita</small><b id="bestPerf">—</b><small id="bestPerf2">—</small></div>
+    <div class="bestCard"><small>Dosah cez steny</small><b id="bestReach">—</b><small id="bestReach2">—</small></div>
+    <div class="bestCard"><small>Alternatíva</small><b id="bestAlt">—</b><small id="bestAlt2">—</small></div>
+  </div>
+</div>
+
+<div class="stats">
+ <div class="stat"><span>Všetky siete</span><strong id="allCount">0</strong></div>
+ <div class="stat"><span>2,4 GHz</span><strong id="c24">0</strong></div>
+ <div class="stat"><span>5 GHz</span><strong id="c5">0</strong></div>
+ <div class="stat"><span>6 GHz</span><strong id="c6">0</strong></div>
+ <div class="stat"><span>Aktuálna Wi‑Fi</span><strong id="current" style="font-size:15px">—</strong></div>
+</div>
+
+<div class="controls">
+ <div class="tabs"><button class="tab active" data-band="2.4">2,4 GHz</button><button class="tab" data-band="5">5 GHz</button><button class="tab" data-band="6">6 GHz</button></div>
+ <div class="mine"><label>Moje siete:</label><input id="mine" value="ADD3, ADD5" placeholder="napr. ADD3, ADD5"></div>
+ <button class="btn" onclick="requestScan()">↻ Skenovať</button>
+</div>
+
+<div class="grid">
+ <div class="panel"><h2>Najlepšie kanály</h2><div id="ranking"></div><div class="note" id="rankNote"></div></div>
+ <div class="panel"><h2>Spektrálny prehľad</h2><div class="chartWrap"><canvas id="chart"></canvas></div><div class="legend">Tvoje siete sú zvýraznené prerušovane a pri hodnotení sa nezapočítavajú ako cudzie rušenie.</div></div>
+</div>
+
+<div class="panel tablePanel"><h2>Detaily sietí</h2><div class="tableScroll"><table><thead><tr><th>SSID / BSSID</th><th>Pásmo</th><th>Kanál</th><th>Frekvencia</th><th>Šírka</th><th>RSSI</th><th>Zabezpečenie</th></tr></thead><tbody id="tbody"></tbody></table></div></div>
+</div>
+<script>
+let state={networks:[],supports5:true,supports6:false,currentSsid:'',mode:''};let band='2.4';
+const $=id=>document.getElementById(id); const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
+function mineList(){return $('mine').value.split(',').map(x=>x.trim().toLowerCase()).filter(Boolean)}
+function isMine(n){return mineList().includes((n.ssid||'').toLowerCase())}
+function requestScan(){if(window.AndroidWiFi) { $('status').textContent='Skenujem…'; AndroidWiFi.requestScan(); } else showError('Appka nebeží v Android kontajneri.','Tento HTML súbor potrebuje natívnu Android appku.');}
+window.onNativeStatus=t=>{$('status').textContent=t};
+window.onNativeData=d=>{if(!d.ok){showNativeError(d);return} hideError();state=d; renderAll();}
+function showNativeError(d){showError('Sken nie je dostupný',d.message||'Neznáma chyba');$('settingsBtn').style.display=d.code==='location_off'?'inline-block':'none';$('status').textContent='Vyžaduje zásah';}
+function showError(t,m){$('error').style.display='block';$('errorTitle').textContent=t;$('errorText').textContent=m}function hideError(){$('error').style.display='none'}
+function freqForChannel(b,ch){if(b==='2.4')return ch===14?2484:2412+(ch-1)*5;if(b==='5')return 5000+ch*5;if(b==='6')return 5950+ch*5;return 0}
+function powerWeight(rssi){return Math.pow(10,(rssi+100)/20)}
+function interferenceAt(b,ch,width=20){let f=freqForChannel(b,ch),sum=0;for(const n of state.networks){if(n.band!==b||isMine(n))continue;let nw=n.width||20;let d=Math.abs(n.frequency-f);let range=(width+nw)/2+5;let overlap=clamp(1-d/range,0,1);sum+=powerWeight(n.rssi)*overlap*overlap}return sum}
+function qualityFromInterference(x){return Math.round(clamp(100-20*Math.log10(1+x),0,100))}
+function candidates(b){if(b==='2.4')return [1,6,11];if(b==='5')return [36,40,44,48,52,56,60,64,100,104,108,112,116,120,124,128,132,136,140];if(b==='6')return [5,21,37,53,69,85];return []}
+function widthAdvice(b,q,ch){if(b==='2.4')return 20;let near=state.networks.filter(n=>n.band===b&&!isMine(n)&&Math.abs(n.frequency-freqForChannel(b,ch))<=45).length;if(b==='6'){if(q>=82&&near<=1)return 160;if(q>=68&&near<=3)return 80;return 40}if(q>=84&&near<=1)return 80;if(q>=68&&near<=3)return 40;return 20}
+function ranked(b){return candidates(b).map(ch=>{let i=interferenceAt(b,ch),q=qualityFromInterference(i);return{ch,q,i,width:widthAdvice(b,q,ch)}}).sort((a,c)=>c.q-a.q)}
+function bandBest(b){let r=ranked(b)[0];return r?{band:b,...r}:null}
+function labelBand(b){return b==='2.4'?'2,4 GHz':b+' GHz'}
+function qualWord(q){return q>=85?'Výborné':q>=70?'Dobré':q>=55?'Použiteľné':q>=40?'Rušnejšie':'Silno rušené'}
+function renderVerdict(){let b24=bandBest('2.4'),b5=state.supports5?bandBest('5'):null,b6=state.supports6?bandBest('6'):null;let perf=[];if(b24)perf.push({...b24,bonus:0});if(b5)perf.push({...b5,bonus:8});if(b6)perf.push({...b6,bonus:12});perf.sort((a,b)=>(b.q+b.bonus)-(a.q+a.bonus));let best=perf[0],alt=perf[1],reach=b24;if(!best)return;
+ $('verdictMain').textContent=`Použi ${labelBand(best.band)} · kanál ${best.ch} · ${best.width} MHz`;
+ $('verdictSub').innerHTML=`Odhad kvality <span class="score">${best.q}/100</span> (${qualWord(best.q)}). Hodnotenie vychádza zo sietí zachytených práve na tomto mieste a ignoruje SSID označené ako tvoje.`;
+ setBest('bestPerf','bestPerf2',best);setBest('bestReach','bestReach2',reach);setBest('bestAlt','bestAlt2',alt);
+}
+function setBest(a,b,x){if(!x){$(a).textContent='—';$(b).textContent='—';return}$(a).textContent=`${labelBand(x.band)} · CH ${x.ch}`;$(b).textContent=`${x.width} MHz · ${x.q}/100 · ${qualWord(x.q)}`}
+function renderStats(){let n=state.networks;$('allCount').textContent=n.length;$('c24').textContent=n.filter(x=>x.band==='2.4').length;$('c5').textContent=n.filter(x=>x.band==='5').length;$('c6').textContent=n.filter(x=>x.band==='6').length;$('current').textContent=state.currentSsid||'Nezistená';$('status').textContent=`${new Date(state.timestamp).toLocaleTimeString('sk-SK')} · ${state.mode||'scan'}`;document.querySelector('[data-band="5"]').classList.toggle('disabled',!state.supports5);document.querySelector('[data-band="6"]').classList.toggle('disabled',!state.supports6)}
+function renderRanking(){let rs=ranked(band).slice(0,5),html='';rs.forEach((r,i)=>{html+=`<div class="rank ${i===0?'first':''}"><div class="rankTop"><span class="ch">${i+1}. Kanál ${r.ch}${i===0?' · POUŽIŤ':''}</span><span class="quality">${r.q}/100</span></div><div class="bar"><div class="fill" style="width:${r.q}%"></div></div><div class="desc">${qualWord(r.q)} · odporúčaná šírka ${r.width} MHz</div></div>`});$('ranking').innerHTML=html;$('rankNote').textContent=band==='2.4'?'Pre 2,4 GHz sa hodnotia kompatibilné neprekrývajúce sa kanály 1 / 6 / 11. Odporúčaná šírka je 20 MHz.':band==='5'?'Pri 5 GHz vyššia šírka zvyšuje rýchlosť, ale zaberá viac spektra. DFS kanály môžu byť na niektorých routeroch dočasne uvoľnené kvôli radaru.':'6 GHz sa zobrazí iba na telefóne, ktorý ho podporuje. Dostupnosť kanálov závisí aj od krajiny a routera.'}
+function security(c){if(/WPA3|SAE/.test(c))return'WPA3';if(/WPA2|RSN|PSK/.test(c))return'WPA2';if(/WPA/.test(c))return'WPA';if(/WEP/.test(c))return'WEP';return c&&c.length?'Iné':'Otvorená'}
+function renderTable(){let list=state.networks.filter(n=>n.band===band).sort((a,b)=>b.rssi-a.rssi);$('tbody').innerHTML=list.map(n=>{let p=clamp((n.rssi+100)*2,4,100),mine=isMine(n);return`<tr><td><span class="ssid">${esc(n.ssid)}</span>${mine?'<span class="mineTag">MOJA</span>':''}${n.current?'<span class="mineTag">PRIPOJENÁ</span>':''}<br><small style="color:#7892aa">${esc(n.bssid)}</small></td><td>${labelBand(n.band)}</td><td>${n.channel||'—'}</td><td>${n.frequency} MHz</td><td>${n.width||20} MHz</td><td><span class="rssiBar"><span class="rssiFill" style="display:block;width:${p}%"></span></span>${n.rssi} dBm</td><td>${security(n.capabilities)}</td></tr>`}).join('')||'<tr><td colspan="7" style="color:#91a9bf">V tomto pásme nebola zachytená žiadna sieť.</td></tr>'}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function renderChart(){let c=$('chart'),dpr=devicePixelRatio||1,w=c.clientWidth,h=c.clientHeight;c.width=w*dpr;c.height=h*dpr;let x=c.getContext('2d');x.scale(dpr,dpr);x.clearRect(0,0,w,h);x.font='11px system-ui';x.strokeStyle='#1f4059';x.fillStyle='#7896ad';x.lineWidth=1;let ymin=-100,ymax=-30,pad={l:45,r:15,t:15,b:30};let pw=w-pad.l-pad.r,ph=h-pad.t-pad.b;for(let db=-100;db<=-30;db+=10){let yy=pad.t+(ymax-db)/(ymax-ymin)*ph;x.beginPath();x.moveTo(pad.l,yy);x.lineTo(w-pad.r,yy);x.stroke();x.fillText(db+' dBm',3,yy+4)}
+ let domain=band==='2.4'?[1,13]:band==='5'?[36,140]:[1,93];let xch=ch=>pad.l+(ch-domain[0])/(domain[1]-domain[0])*pw;let tickStep=band==='2.4'?1:band==='5'?8:16;for(let ch=domain[0];ch<=domain[1];ch+=tickStep){let xx=xch(ch);x.strokeStyle='#15334a';x.beginPath();x.moveTo(xx,pad.t);x.lineTo(xx,h-pad.b);x.stroke();x.fillStyle='#7896ad';x.fillText(ch,xx-5,h-8)}
+ let colors=['#40d6a4','#ff6b6b','#f9c74f','#a46bff','#31a9ff','#ff4fa3','#b9d541','#ff8c42','#48cae4'];let nets=state.networks.filter(n=>n.band===band);nets.forEach((n,idx)=>{let ch=n.channel;if(!ch||ch<domain[0]-10||ch>domain[1]+10)return;let yy=pad.t+(ymax-n.rssi)/(ymax-ymin)*ph;let base=h-pad.b;let span=band==='2.4'?(n.width===40?8:4):band==='5'?Math.max(4,(n.width||20)/5):Math.max(8,(n.width||20)/5);let left=xch(ch-span/2),right=xch(ch+span/2),mid=xch(ch);x.beginPath();x.moveTo(left,base);x.quadraticCurveTo(mid,yy,right,base);x.strokeStyle=isMine(n)?'#ffffff':colors[idx%colors.length];x.lineWidth=isMine(n)?2.5:2;x.setLineDash(isMine(n)?[7,5]:[]);x.stroke();x.setLineDash([]);if(n.rssi>-78){x.fillStyle='#e7f2ff';x.font='10px system-ui';x.fillText(n.ssid,mid-Math.min(45,n.ssid.length*2.6),yy-5)}})}
+function renderAll(){renderStats();renderVerdict();renderRanking();renderTable();requestAnimationFrame(renderChart)}
+document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{if(t.classList.contains('disabled'))return;document.querySelectorAll('.tab').forEach(z=>z.classList.remove('active'));t.classList.add('active');band=t.dataset.band;renderRanking();renderTable();renderChart()});
+$('mine').value=localStorage.getItem('mineSsids')||$('mine').value;$('mine').addEventListener('input',()=>{localStorage.setItem('mineSsids',$('mine').value);if(state.networks.length)renderAll()});window.addEventListener('resize',()=>state.networks.length&&renderChart());
+setTimeout(requestScan,500);setInterval(requestScan,30000);
+</script></body></html>
